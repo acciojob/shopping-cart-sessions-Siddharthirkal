@@ -1,5 +1,3 @@
-// This is the boilerplate code given for you
-// You can modify this code
 // Product data
 const products = [
   { id: 1, name: "Product 1", price: 10 },
@@ -14,66 +12,65 @@ const productList = document.getElementById("product-list");
 const cartList = document.getElementById("cart-list");
 const clearCartBtn = document.getElementById("clear-cart-btn");
 
-function getCartFromSession(){
-	const cartData = sessionStroage.getItem("cart");
-	return cartData ? JSON.parse(cartData) : [];
+// ---- SESSION STORAGE HELPERS ---- //
+function getCartFromSession() {
+  const cartData = window.sessionStorage.getItem("cart");   // ← FIXED
+  return cartData ? JSON.parse(cartData) : [];
 }
 
-function saveCartToSession(cart){
-	sessionStorage.setItem("cart", JSON.stringify(cart));
+function saveCartToSession(cart) {
+  window.sessionStorage.setItem("cart", JSON.stringify(cart)); // ← FIXED
 }
 
-// Render product list
+// ---- RENDER PRODUCT LIST ---- //
 function renderProducts() {
   products.forEach((product) => {
     const li = document.createElement("li");
-    li.innerHTML = `${product.name} - $${product.price} <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>`;
+    li.innerHTML = `
+      ${product.name} - $${product.price}
+      <button class="add-to-cart-btn" data-id="${product.id}">Add to Cart</button>
+    `;
     productList.appendChild(li);
   });
 
-	const buttons = document.querySelectorAll(".add-to-cart-btn");
-	buttons.forEach((btn) => {
-		btn.addEventListener("click",() => {
-			addToCart(Number(btn.dataset.id));
-		});
-	});
+  document.querySelectorAll(".add-to-cart-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      addToCart(Number(btn.dataset.id));
+    });
+  });
 }
 
-// Render cart list
+// ---- RENDER CART ---- //
 function renderCart() {
-	cartList.innerHTML = "";
+  cartList.innerHTML = "";
 
-	const cart = getCartFromSession();
+  const cart = getCartFromSession();
 
-	cart.forEach((item) => {
-		const li = document.createElement("li");
-		li.textContent = `${item.name} - $${item.price}`;
-		cartList.appendChild(li);
-	});
+  cart.forEach((item) => {
+    const li = document.createElement("li");
+    li.textContent = `${item.name} - $${item.price}`;
+    cartList.appendChild(li);
+  });
 }
 
-
-// Add item to cart
+// ---- ADD TO CART ---- //
 function addToCart(productId) {
-	const product = products.find((p) => p.id === productId);
-	const cart = getCartFromSession();
+  const product = products.find((p) => p.id === productId);
+  const cart = getCartFromSession();
 
-	cart.push(product);
-	saveCartToSession(cart);
-
-	renderCart();
+  cart.push(product);
+  saveCartToSession(cart);
+  renderCart();
 }
 
-// Remove item from cart
-function removeFromCart(productId) {}
-
-// Clear cart
+// ---- CLEAR CART ---- //
 function clearCart() {
-	sessionStorage.removeItem("cart");
-	renderCart();
+  window.sessionStorage.removeItem("cart");
+  renderCart();
 }
 
-clearCartBtn.addEventListener("click",clearCart);
-// Initial render
+clearCartBtn.addEventListener("click", clearCart);
+
+// ---- INITIAL ---- //
 renderProducts();
 renderCart();
