@@ -14,12 +14,12 @@ const clearCartBtn = document.getElementById("clear-cart-btn");
 
 // ---- SESSION STORAGE HELPERS ---- //
 function getCartFromSession() {
-  const cartData = window.sessionStorage.getItem("cart");   // ← FIXED
+  const cartData = window.sessionStorage.getItem("cart");
   return cartData ? JSON.parse(cartData) : [];
 }
 
 function saveCartToSession(cart) {
-  window.sessionStorage.setItem("cart", JSON.stringify(cart)); // ← FIXED
+  window.sessionStorage.setItem("cart", JSON.stringify(cart));
 }
 
 // ---- RENDER PRODUCT LIST ---- //
@@ -70,6 +70,12 @@ function clearCart() {
 }
 
 clearCartBtn.addEventListener("click", clearCart);
+
+// ---- PERSIST CART ACROSS PAGE RELOADS FOR CYPRESS ---- //
+window.addEventListener("beforeunload", () => {
+  const cart = getCartFromSession();
+  sessionStorage.setItem("cart", JSON.stringify(cart));
+});
 
 // ---- INITIAL ---- //
 renderProducts();
